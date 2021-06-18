@@ -1,0 +1,11 @@
+name: "Cloudflare Purge Cache GitHub Action"
+description: "Purge a zone's cache via the Cloudflare API"
+author: aorfanos
+runs:
+  using: "composite"
+  steps:
+    - run: python ${{ github.action_path }}/cloudflare.py
+      shell: bash
+branding:
+  color: orange
+  icon: cloud
