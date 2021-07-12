@@ -10,6 +10,7 @@ cf_email_addr = os.environ.get("CF_EMAIL_ADDR")
 cf_token = os.environ.get("CF_TOKEN")
 cf_zone_name = os.environ.get("CF_ZONE_NAME")
 cf_purge_urls = os.environ.get("CF_PURGE_URLS")
+cf_prefixes = os.environ.get("CF_PURGE_PREFIXES")
 
 # use legacy global API key if cf_token input is not defined
 if cf_token is None:
@@ -29,9 +30,13 @@ if cf_purge_urls is None:
     data = {
         "purge_everything": True,
     }
+elif cf_purge_urls is None and cf_prefixes is not None:
+    data = {
+        "prefixes": [f'"{cf_prefixes}"'],
+    }
 else:
     data = {
-        "prefixes": [f'"{cf_purge_urls}"'],
+        "files": [f'"{cf_purge_urls}"'],
     }
 
 def ZoneNameToID(zoneName: str):
