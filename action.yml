@@ -11,6 +11,9 @@ inputs:
   cf_purge_hosts:
     description: "If specified, it will purge comma-separated hosts."
     required: false
+  cf_purge_urls:
+    description: "A comma-separated list of files to purge"
+    required: false
 runs:
   using: docker
   image: Dockerfile
