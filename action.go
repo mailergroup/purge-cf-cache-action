@@ -62,10 +62,11 @@ func main() {
 		}
 		purgeJSON, errj := json.Marshal(purgePrefData)
 		ErrCheck(errj)
-		purgeReq, err := http.NewRequest("POST", "https://api.cloudflare.com/client/v4/"+zoneName+"/purge_cache",
+		purgeReq, err := http.NewRequest("POST", "https://api.cloudflare.com/client/v4/zones/"+zoneName+"/purge_cache",
 			bytes.NewBuffer(purgeJSON))
 		ErrCheck(err)
-		purgeReq.Header.Add("Authorization", "Bearer "+CFToken)
+		purgeReq.Header.Set("Authorization", "Bearer "+CFToken)
+		purgeReq.Header.Set("Content-Type", "application/json")
 		purgeResp, err := client.Do(purgeReq)
 		ErrCheck(err)
 		defer purgeResp.Body.Close()
