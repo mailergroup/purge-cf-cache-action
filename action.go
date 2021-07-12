@@ -31,10 +31,17 @@ func main() {
 	zoneName, err := api.ZoneIDByName(CFZoneName)
 	ErrCheck(err)
 
-	purgeURLs, present := os.LookupEnv("INPUT_CF_PURGE_HOSTS")
+	purgeHosts, present := os.LookupEnv("INPUT_CF_PURGE_HOSTS")
+	purgeURLs, presentURL := os.LookupEnv("INPUT_CF_PURGE_URLS")
 	_ = purgeURLs //omit 'declared but not used' err
+	_ = purgeHosts
 	if present {
-		pcr := cloudflare.PurgeCacheRequest{Hosts: strings.Split(purgeURLs, ",")}
+		pcr := cloudflare.PurgeCacheRequest{Hosts: strings.Split(purgeHosts, ",")}
+		purge, err := api.PurgeCache(ctx, zoneName, pcr)
+		ErrCheck(err)
+		fmt.Printf("Success: %t", purge.Response.Success)
+	} else if presentURL {
+		pcr := cloudflare.PurgeCacheRequest{Files: strings.Split(purgeURLs, ",")}
 		purge, err := api.PurgeCache(ctx, zoneName, pcr)
 		ErrCheck(err)
 		fmt.Printf("Success: %t", purge.Response.Success)
@@ -43,4 +50,6 @@ func main() {
 		ErrCheck(err)
 		fmt.Printf("Success: %t", purge.Response.Success)
 	}
+
+	fmt.Printf("%s\n%s\n%s\n%s", CFToken, CFZoneName, purgeHosts, purgeURLs)
 }
