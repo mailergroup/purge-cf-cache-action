@@ -1,9 +1,23 @@
 name: "Cloudflare Purge Cache GitHub Action"
 description: "Purge a zone's cache via the Cloudflare API"
 author: aorfanos
+inputs:
+  cf_token: 
+    description: "A valid CF API token with Zones.Get and Zones.Purge permissions"
+    required: true
+  cf_zone_name: 
+    description: "CF zone name manageable by ${cf_token}"
+    required: false
+  cf_purge_hosts:
+    description: "If specified, it will purge comma-separated hosts."
+    required: false
 runs:
   using: docker
   image: Dockerfile
+  args:
+    - ${{ inputs.cf_token }}
+    - ${{ inputs.cf_zone_name }}
+    - ${{ inputs.cf_purge_hosts }}
 branding:
   color: orange
   icon: cloud
