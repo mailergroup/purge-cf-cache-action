@@ -10,27 +10,24 @@ All sensitive variables should be [set as encrypted secrets](https://help.github
 #### Run using CloudFlare auth token
 ```yaml
     - name: Purge cache
-      uses: remotecompany/purge-cf-cache-action@v0.0.1
-      env:
-        CF_TOKEN: ${{ secrets.CF_TOKEN }}
-        CF_ZONE_NAME: ${{ secrets.CF_ZONE_NAME }}
+      uses: remotecompany/purge-cf-cache-action@v0.0.2
+      with:
+        cf_token: ${{ secrets.CF_TOKEN }}
+        cf_zone_name: ${{ secrets.CF_ZONE_NAME }}
 ```
-
-#### Run using legacy CloudFlare API key
-```yaml
-    - name: Purge cache
-      uses: remotecompany/purge-cf-cache-action@v0.0.1
-      env:
-        CF_EMAIL_ADDR: ${{ secrets.CF_EMAIL_ADDR }}
-        CF_API_KEY: ${{ secrets.CF_API_KEY }}
-        CF_ZONE_NAME: ${{ secrets.CF_ZONE_NAME }}
-```
-
 
 ### Purging specific files
 
 To purge only specific files, you can pass an array of **fully qualified URLs** via a fourth environment variable named `CF_PURGE_URLS`.
 
 ```yaml
-CF_PURGE_URLS: '["https://aorfanos.com/styles.css","https://aorfanos.com/style.css"]'
+cf_purge_urls: '["https://aorfanos.com/styles.css","https://aorfanos.com/style.css"]'
+```
+
+### Purging by host
+
+To purge only specific files, you can pass an array of **fully qualified URLs** via a fourth environment variable named `CF_PURGE_URLS`.
+
+```yaml
+cf_purge_hosts: "https://remotecompany.com,https://foo.remotecompany.com"
 ```
