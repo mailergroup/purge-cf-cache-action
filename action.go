@@ -3,10 +3,10 @@ package main
 import (
 	// "context"
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go"
 )
@@ -32,18 +32,15 @@ func main() {
 	ErrCheck(err)
 
 	purgeURLs, present := os.LookupEnv("INPUT_CF_PURGE_HOSTS")
+	_ = purgeURLs //omit 'declared but not used' err
 	if present {
-		pcr, err := json.Marshal(cloudflare.PurgeCacheRequest{
-			Hosts: ["https://blog.aorfanos.com", "https://aorfanos.com"],
-		})
+		pcr := cloudflare.PurgeCacheRequest{Hosts: strings.Split(purgeURLs, ",")}
+		purge, err := api.PurgeCache(ctx, zoneName, pcr)
 		ErrCheck(err)
-		api.PurgeCache(ctx, zoneName, pcr)
+		fmt.Printf("Success: %t", purge.Response.Success)
 	} else {
-		api.PurgeEverything(ctx, zoneName)
+		purge, err := api.PurgeEverything(ctx, zoneName)
+		ErrCheck(err)
+		fmt.Printf("Success: %t", purge.Response.Success)
 	}
-
-	zoneID, err := api.ZoneIDByName(CFZoneName)
-	ErrCheck(err)
-
-	fmt.Printf("%s", zoneID)
 }
