@@ -56,16 +56,20 @@ func main() {
 		ErrCheck(err)
 		fmt.Printf("Success: %t", purge.Response.Success)
 	} else if len(purgePrefixes) > 1 {
+		client := &http.Client{}
 		purgePrefData := CFPurgeWithPrefixes{
 			Prefixes: strings.Split(purgePrefixes, ","),
 		}
 		purgeJSON, errj := json.Marshal(purgePrefData)
 		ErrCheck(errj)
-		purge, err := http.Post("https://api.cloudflare.com/client/v4/"+zoneName+"/purge_cache",
-			"application/json",
+		purgeReq, err := http.NewRequest("POST", "https://api.cloudflare.com/client/v4/"+zoneName+"/purge_cache",
 			bytes.NewBuffer(purgeJSON))
 		ErrCheck(err)
-		fmt.Printf("Success status code: %d", purge.StatusCode)
+		purgeReq.Header.Add("Authorization", "Bearer "+CFToken)
+		purgeResp, err := client.Do(purgeReq)
+		ErrCheck(err)
+		defer purgeResp.Body.Close()
+		fmt.Printf("Success status code: %s", purgeResp.Status)
 	} else {
 		purge, err := api.PurgeEverything(ctx, zoneName)
 		ErrCheck(err)
