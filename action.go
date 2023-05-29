@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "context"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -26,54 +25,60 @@ type CFPurgeWithPrefixes struct {
 	Prefixes []string `json:"prefixes,omitempty"`
 }
 
-func ErrCheck(e error) {
-	if e != nil {
-		log.Println(e)
-	}
-}
-
 func main() {
 	api, err := cloudflare.NewWithAPIToken(CFToken)
-	ErrCheck(err)
+	if err != nil {
+		log.Println(err)
+	}
 
 	ctx := context.Background()
 
 	zoneName, err := api.ZoneIDByName(CFZoneName)
-	ErrCheck(err)
+	if err != nil {
+		log.Println(err)
+	}
 
-	// purgeHosts, present := os.LookupEnv("INPUT_CF_PURGE_HOSTS")
-	// purgeURLs, presentURL := os.LookupEnv("INPUT_CF_PURGE_URLS")
-	// _ = purgeURLs //omit 'declared but not used' err
-	// _ = purgeHosts
 	if len(purgeHosts) > 1 {
 		pcr := cloudflare.PurgeCacheRequest{Hosts: strings.Split(purgeHosts, ",")}
 		purge, err := api.PurgeCache(ctx, zoneName, pcr)
-		ErrCheck(err)
+		if err != nil {
+			log.Println(err)
+		}
 		fmt.Printf("Success: %t", purge.Response.Success)
 	} else if len(purgeURLs) > 1 {
 		pcr := cloudflare.PurgeCacheRequest{Files: strings.Split(purgeURLs, ",")}
 		purge, err := api.PurgeCache(ctx, zoneName, pcr)
-		ErrCheck(err)
+		if err != nil {
+			log.Println(err)
+		}
 		fmt.Printf("Success: %t", purge.Response.Success)
 	} else if len(purgePrefixes) > 1 {
 		client := &http.Client{}
 		purgePrefData := CFPurgeWithPrefixes{
 			Prefixes: strings.Split(purgePrefixes, ","),
 		}
-		purgeJSON, errj := json.Marshal(purgePrefData)
-		ErrCheck(errj)
+		purgeJSON, err := json.Marshal(purgePrefData)
+		if err != nil {
+			log.Println(err)
+		}
 		purgeReq, err := http.NewRequest("POST", "https://api.cloudflare.com/client/v4/zones/"+zoneName+"/purge_cache",
 			bytes.NewBuffer(purgeJSON))
-		ErrCheck(err)
+		if err != nil {
+			log.Println(err)
+		}
 		purgeReq.Header.Set("Authorization", "Bearer "+CFToken)
 		purgeReq.Header.Set("Content-Type", "application/json")
 		purgeResp, err := client.Do(purgeReq)
-		ErrCheck(err)
+		if err != nil {
+			log.Println(err)
+		}
 		defer purgeResp.Body.Close()
 		fmt.Printf("Success status code: %s", purgeResp.Status)
 	} else {
 		purge, err := api.PurgeEverything(ctx, zoneName)
-		ErrCheck(err)
+		if err != nil {
+			log.Println(err)
+		}
 		fmt.Printf("Success: %t", purge.Response.Success)
 	}
 }

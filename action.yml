@@ -2,10 +2,10 @@ name: "Cloudflare Purge Cache GitHub Action"
 description: "Purge a zone's cache via the Cloudflare API"
 author: aorfanos
 inputs:
-  cf_token: 
+  cf_token:
     description: "A valid CF API token with Zones.Get and Zones.Purge permissions"
     required: true
-  cf_zone_name: 
+  cf_zone_name:
     description: "CF zone name manageable by ${cf_token}"
     required: false
   cf_purge_hosts:
