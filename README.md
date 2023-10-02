@@ -20,7 +20,7 @@ All sensitive variables should be [set as encrypted secrets](https://help.github
 To purge only specific files, you can pass an array of **fully qualified URLs** via a fourth environment variable named `CF_PURGE_URLS`.
 
 ```yaml
-cf_purge_urls: '["https://aorfanos.com/styles.css","https://aorfanos.com/style.css"]'
+cf_purge_urls: '["https://mailergroup.com/styles.css","https://mailergroup.com/app.js"]'
 ```
 
 ### Purging by host
