@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as base
+FROM golang:1.23-alpine as base
 WORKDIR /src
 COPY . /src
 RUN CGO_ENABLED=0 go build -o cfpurge
